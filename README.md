@@ -71,6 +71,34 @@ Or install it yourself as:
 $ gem install sidekiq-cron-tasks
 ```
 
+## Usage Outside of Rails
+
+You MUST add configuration settings for `file` and `env`, e.g.
+
+```ruby
+Sidekiq::Cron::Tasks.configure do |config|
+  config.file = "config/sidekiq_cron.yml"
+  config.env  = ENV['RACK_ENV'] # this just defines the key to look up in the YAML file
+end
+```
+
+Append the following to your `Rakefile` to add the `sidekiq_cron:load` rake task:
+
+```ruby
+require 'sidekiq-cron-tasks'
+spec = Gem::Specification.find_by_name 'sidekiq-cron-tasks'
+Dir.glob("#{spec.gem_dir}/lib/tasks/sidekiq_cron/*.rake").each { |r| import r }
+```
+
+Optionally, define an `:environment` task to load ENV vars, run initializers, etc. This task will be run before
+`sidekiq_cron:load`.
+
+```ruby
+task :environment do
+  require 'config/boot.rb'
+end
+```
+
 ## Contributing
 Contribution directions go here.
 

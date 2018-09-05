@@ -1,3 +1,7 @@
+task :environment do
+  # no-op -- expect Rails / outlying framework to define
+end
+
 namespace :sidekiq_cron do
   desc "Load Sidekiq Cron entries from file"
   task load: :environment do

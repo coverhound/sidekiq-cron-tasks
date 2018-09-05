@@ -1,5 +1,5 @@
 require "sidekiq-cron"
-require "sidekiq/cron/tasks/railtie"
+require "sidekiq/cron/tasks/railtie" if defined?(::Rails)
 require "sidekiq/cron/tasks/configuration"
 
 module Sidekiq

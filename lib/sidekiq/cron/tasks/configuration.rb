@@ -2,11 +2,14 @@ module Sidekiq
   module Cron
     module Tasks
       class Configuration
-        attr_accessor :file, :prefix
+        attr_accessor :file, :prefix, :env
 
         def initialize
-          @file = ::Rails.root.join("config", "sidekiq_cron.yml")
           @prefix = "sidekiq_cron"
+          if defined?(::Rails)
+            @file = ::Rails.root.join("config", "sidekiq_cron.yml")
+            @env  = ::Rails.env
+          end
         end
 
         def file
@@ -14,7 +17,7 @@ module Sidekiq
         end
 
         def schedule
-          @schedule ||= File.exist?(file) ? YAML.load_file(file).fetch(::Rails.env, {}) : {}
+          @schedule ||= File.exist?(file) ? YAML.load_file(file).fetch(env, {}) : {}
         end
       end
     end
