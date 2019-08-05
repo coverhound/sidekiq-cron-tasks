@@ -11,7 +11,21 @@ namespace :sidekiq_cron do
     end
 
     Rake::Task['sidekiq_cron:clear'].invoke
-    Sidekiq::Cron::Job.load_from_hash prefixed_hash
+    errors = Sidekiq::Cron::Job.load_from_hash prefixed_hash
+
+    next if errors.empty?
+
+    logger = Logger.new(STDERR)
+    errors.each do |job_name, error_array|
+      msg = [
+        "Errors encountered when loading '#{job_name}':",
+        *error_array.map { |err| " - #{err}" }
+      ].join("\n")
+
+      logger.error(msg)
+    end
+
+    raise StandardError, 'Errors while loading Sidekiq Cron Jobs'
   end
 
   desc "Clear Sidekiq Cron entries"
